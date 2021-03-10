@@ -3,7 +3,9 @@ package pi.histograma;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import javax.imageio.ImageIO;
 
 /**
@@ -11,8 +13,6 @@ import javax.imageio.ImageIO;
  * @author gabri
  */
 public class PIHistograma {
-    
-
     BufferedImage abreImagem() throws IOException{
         BufferedImage image = ImageIO.read(new File("Imagens-in\\2.jpg"));
         return image;
@@ -74,11 +74,15 @@ public class PIHistograma {
         }
         return NovaImg;
     }
-    void imprimeHistograma(BufferedImage img){
+    void imprimeHistograma(BufferedImage img, String nomeDoc) throws IOException{
         int[] histograma = calculaHistogramaRGB(img);
-        for(int i = 0 ; i< histograma.length ; i++){
-            System.out.println(histograma[i]);
+        FileWriter arq = new FileWriter(nomeDoc+".txt");
+        PrintWriter gravarArq = new PrintWriter(arq);
+        gravarArq.printf("--Resultado--%n");
+        for (int i=1; i < histograma.length; i++) {
+            gravarArq.println(histograma[i]);
         }
+        arq.close();
     }
     void Cria_Image_Resultante(BufferedImage img) throws IOException{
         ImageIO.write(img,"jpg",new File("Resultante.jpg"));
@@ -86,7 +90,8 @@ public class PIHistograma {
     void run() throws IOException {
         BufferedImage img = abreImagem();
         BufferedImage ImgEqualizada = equalizacao(img);
-        imprimeHistograma(img);
+        imprimeHistograma(img, "Histograma inicial");
+        imprimeHistograma(ImgEqualizada, "Histograma equalizado");
         Cria_Image_Resultante(ImgEqualizada);
     }
     public static void main(String[] args) throws IOException {
